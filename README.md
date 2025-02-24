@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="image.png" alt="MeDiCT Favicon" width="200">
+  <img src="image.png" alt="NMIMR MEDICT" width="200">
 </p>
 
-# MeDict
+# NMIMR MEDICT
 Medical Diagnosis using Computer Vision
 ## Table of Contents
 
