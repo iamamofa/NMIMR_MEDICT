@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="FavIcon.jpeg" alt="MeDiCT Favicon" width="200">
+  <img src="image.png" alt="MeDiCT Favicon" width="200">
 </p>
 
 # MeDict
