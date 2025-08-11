@@ -1,21 +1,17 @@
-# app.py
 import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image
 import time
-import math
 
 # -------------------
-# Load models
+# Load models (only kidney and brain)
 # -------------------
-lung_model = tf.keras.models.load_model("./models/lung.hdf5")
 kidney_model = tf.keras.models.load_model("./models/Kidney_tumor.hdf5")
 brain_model = tf.keras.models.load_model("./models/Brain_Tumor.hdf5")
 
 # -------------------
 # Cancer class + definitions
-# (kept your content unchanged)
 # -------------------
 class Cancer:
     def __init__(
@@ -34,63 +30,7 @@ class Cancer:
         self.true_negative_description = true_negative_description
         self.precautions = precautions
 
-# --- lung_cancer (your content) ---
-lung_cancer = Cancer(
-    name="Lung Cancer",
-    description="Lung cancer is a malignant disease that originates in the lungs. It is categorized into two main types: non-small cell lung cancer (NSCLC) and small cell lung cancer (SCLC). NSCLC is the more common type and typically grows and spreads more slowly than SCLC. SCLC, although less common, tends to grow more aggressively and is more likely to spread to other organs in the body. Lung cancer is often associated with smoking but can also occur in non-smokers due to other factors such as exposure to secondhand smoke, air pollution, or genetic predisposition. Early detection and treatment are crucial for improving outcomes.",
-    labels={
-        0: "Adenocarcinoma",
-        1: "Large Cell Carcinoma",
-        2: "Normal",
-        3: "Squamous Cell Carcinoma",
-    },
-    true_positive_descriptions={
-        "Adenocarcinoma": "The image shows signs of Adenocarcinoma lung cancer. Please consult a doctor for further evaluation and treatment.",
-        "Large Cell Carcinoma": "The image shows signs of Large Cell Carcinoma lung cancer. Please consult a doctor for further evaluation and treatment.",
-        "Squamous Cell Carcinoma": "The image shows signs of Squamous Cell Carcinoma lung cancer. Please consult a doctor for further evaluation and treatment.",
-    },
-    true_negative_description="The image does not show any signs of lung cancer. However, regular check-ups are recommended.",
-    precautions={
-        "Adenocarcinoma": """
-            <ol>
-                <li><strong>Quit Smoking:</strong> Enroll in a smoking cessation program or use nicotine replacement therapies (patches, gums) and medications like varenicline or bupropion under medical supervision.</li>
-                <li><strong>Avoid Secondhand Smoke:</strong> Stay away from areas where smoking is permitted and advocate for smoke-free environments in public spaces.</li>
-                <li><strong>Healthy Diet:</strong> Include a diet rich in fruits, vegetables, whole grains, and lean proteins. Reduce red meat and processed foods.</li>
-                <li><strong>Regular Exercise:</strong> Aim for at least 150 minutes of moderate aerobic activity or 75 minutes of vigorous activity weekly, along with muscle-strengthening activities.</li>
-                <li><strong>Routine Health Screenings:</strong> Schedule regular check-ups, including lung cancer screenings (low-dose CT scans) if you have a history of heavy smoking.</li>
-                <li><strong>Environmental Factors:</strong> Minimize exposure to known carcinogens like radon, asbestos, and air pollution by using protective measures and improving ventilation at home and work.</li>
-                <li><strong>Vaccinations:</strong> Stay updated with vaccinations, such as the flu shot, to reduce lung infections that can complicate respiratory health.</li>
-                <li><strong>Follow Medical Advice:</strong> Adhere to prescribed treatments and medications, attend all follow-up appointments, and report any new symptoms to your doctor immediately.</li>
-            </ol>
-        """,
-        "Large Cell Carcinoma": """
-            <ol>
-                <li><strong>Quit Smoking:</strong> Use behavioral therapy, support groups, and medications as recommended by your healthcare provider to help quit smoking.</li>
-                <li><strong>Avoid Secondhand Smoke:</strong> Implement a no-smoking policy at home and choose smoke-free accommodations when traveling.</li>
-                <li><strong>Balanced Nutrition:</strong> Emphasize a diet with antioxidants and anti-inflammatory properties, including omega-3 fatty acids found in fish and flaxseeds.</li>
-                <li><strong>Physical Activity:</strong> Engage in regular physical activity tailored to your fitness level, such as walking, cycling, or swimming.</li>
-                <li><strong>Occupational Safety:</strong> Use protective gear if you work in environments with chemical fumes, dust, or other hazardous substances. Follow workplace safety regulations.</li>
-                <li><strong>Home Safety:</strong> Test your home for radon levels and install mitigation systems if necessary. Reduce exposure to household chemicals by using natural cleaning products.</li>
-                <li><strong>Stress Management:</strong> Practice stress-relief techniques such as mindfulness, yoga, or meditation to improve overall well-being.</li>
-                <li><strong>Follow Medical Advice:</strong> Maintain regular communication with your healthcare team, follow treatment plans, and promptly address any concerns or side effects.</li>
-            </ol>
-        """,
-        "Squamous Cell Carcinoma": """
-            <ol>
-                <li><strong>Quit Smoking:</strong> Seek professional help through cessation programs, counseling, and FDA-approved medications to quit smoking effectively.</li>
-                <li><strong>Avoid Secondhand Smoke:</strong> Create a smoke-free home environment and avoid social settings where smoking is prevalent.</li>
-                <li><strong>Dietary Adjustments:</strong> Consume a diet high in vitamins and minerals, particularly vitamin A, C, and E, which are found in colorful fruits and vegetables.</li>
-                <li><strong>Exercise Routine:</strong> Incorporate regular physical activity that includes both cardiovascular and strength-training exercises to enhance lung function and overall health.</li>
-                <li><strong>Protective Measures:</strong> Use personal protective equipment (PPE) if you are exposed to dust, asbestos, or other harmful substances at work.</li>
-                <li><strong>Regular Screenings:</strong> Participate in regular health check-ups and lung cancer screenings if you are at high risk. Early detection is crucial.</li>
-                <li><strong>Avoid Carcinogens:</strong> Limit exposure to environmental carcinogens by using air purifiers, avoiding polluted areas, and ensuring proper ventilation in living and working spaces.</li>
-                <li><strong>Follow Medical Advice:</strong> Keep up with all prescribed treatments, attend regular follow-up appointments, and stay informed about the latest treatment options and clinical trials.</li>
-            </ol>
-        """,
-    },
-)
-
-# --- kidney_cancer (your content) ---
+# --- kidney_cancer ---
 kidney_cancer = Cancer(
     name="Kidney Cancer",
     description="Kidney cancer, medically termed renal cancer, originates within the kidneys. The predominant form is renal cell carcinoma (RCC), accounting for the majority of cases. It typically begins in the lining of the renal tubules and can grow and spread to other parts of the body if not detected early. Symptoms may include blood in the urine, lower back pain, or a mass in the abdomen. Treatment options vary based on the stage and location of the cancer, including surgery, targeted therapy, immunotherapy, or radiation therapy. Regular medical check-ups are crucial for early detection and management of kidney cancer.",
@@ -186,7 +126,7 @@ kidney_cancer = Cancer(
     },
 )
 
-# --- brain_cancer (your content) ---
+# --- brain_cancer ---
 brain_cancer = Cancer(
     name="Brain Tumor",
     description="Brain tumors are abnormal growths of cells that can develop in the brain or central spine. These tumors can either be cancerous (malignant) or non-cancerous (benign). Malignant brain tumors are more aggressive and can invade nearby tissues, making them potentially life-threatening. Benign tumors, while generally less aggressive, can still cause problems depending on their size and location. Symptoms of brain tumors vary depending on their size, location, and rate of growth, and may include headaches, seizures, behavioral changes, or problems with vision or speech. Treatment options typically include surgery, radiation therapy, and chemotherapy, tailored to the specific type and location of the tumor. Regular monitoring and follow-up are essential to manage symptoms and monitor for recurrence.",
@@ -298,9 +238,7 @@ def preprocess_image(image):
     return img
 
 def predict(image, cancer_type):
-    if cancer_type.name == "Lung Cancer":
-        model = lung_model
-    elif cancer_type.name == "Kidney Cancer":
+    if cancer_type.name == "Kidney Cancer":
         model = kidney_model
     else:
         model = brain_model
@@ -314,7 +252,6 @@ def predict(image, cancer_type):
     return predicted_class, probability, prediction
 
 def color_for_prob(p):
-    # return gradient colors (start, end) based on probability
     if p < 0.5:
         return ("#a8e6a3", "#4caf50")  # light green -> green
     elif p < 0.8:
@@ -323,18 +260,11 @@ def color_for_prob(p):
         return ("#ffb3b3", "#f44336")  # light red -> red
 
 def animate_gradient_bar(container, label, target_prob, theme_text_color, duration=1.0):
-    """
-    Animate a custom gradient bar in the given st.empty container.
-    target_prob: float in [0,1]
-    duration: seconds for animation
-    """
-    frames = max(12, int(duration * 30))  # smoothness
+    frames = max(12, int(duration * 30))
     start_color, end_color = color_for_prob(target_prob)
     for f in range(frames + 1):
-        # percentage to render for this frame (0..target_percent)
         progress_frac = (f / frames) * target_prob
         width_pct = progress_frac * 100
-        # render HTML
         bar_html = f"""
         <div style="margin-bottom:10px;">
             <div style="display:flex; justify-content:space-between; font-weight:600; color:{theme_text_color}; margin-bottom:6px;">
@@ -417,7 +347,7 @@ def main():
     # Header
     st.markdown('<div class="app-header">', unsafe_allow_html=True)
     st.markdown(f'<div class="page-title">NMIMR MEDICT</div>', unsafe_allow_html=True)
-    st.markdown(f'<div class="page-subtitle">AI-powered medical image diagnosis — Lung, Kidney, Brain</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="page-subtitle">AI-powered medical image diagnosis — Kidney, Brain</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
     # About developer
@@ -426,98 +356,69 @@ def main():
             """
             <div class="card">
                 <h4 style="margin-bottom:6px;">About the developer</h4>
-                <p class="muted small">Justice Ohene Amofa — machine learning & web developer. Connect: <a href="https://www.linkedin.com/in/joamofa/" target="_blank">LinkedIn</a> • <a href="https://github.com/iamamofa" target="_blank">GitHub</a></p>
+                <p class="muted small">
+                    This application was developed by Justice PANGenS. It uses TensorFlow deep learning models trained to assist with kidney and brain cancer detection.
+                </p>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    # Options & sidebar details
-    cancer_types = [lung_cancer, kidney_cancer, brain_cancer]
-    options = [c.name for c in cancer_types]
-    selected_option = st.sidebar.selectbox("Select cancer type", options)
-    selected_cancer_type = next(c for c in cancer_types if c.name == selected_option)
-    st.sidebar.markdown(f"**About:** {selected_cancer_type.description}", unsafe_allow_html=True)
+    # Choose cancer type
+    cancer_options = {
+        "Kidney Cancer": kidney_cancer,
+        "Brain Tumor": brain_cancer,
+    }
+    cancer_choice = st.selectbox("Select cancer type to analyze", options=list(cancer_options.keys()))
 
-    # Upload area
-    uploaded_file = st.file_uploader("Upload a medical scan (jpg / png)", type=["jpg", "jpeg", "png"])
+    cancer_type = cancer_options[cancer_choice]
 
-    # Layout: two columns
-    col_left, col_right = st.columns([1, 1])
+    # Show description
+    st.markdown(f"### About {cancer_type.name}")
+    st.markdown(f"<p class='muted small'>{cancer_type.description}</p>", unsafe_allow_html=True)
 
-    with col_left:
-        if uploaded_file:
+    # Upload image
+    uploaded_file = st.file_uploader(f"Upload an image for {cancer_type.name} diagnosis", type=["png", "jpg", "jpeg"])
+
+    if uploaded_file is not None:
+        try:
             image = Image.open(uploaded_file)
             st.image(image, caption="Uploaded image", use_column_width=True)
-        else:
-            # placeholder image/text
-            st.info("Upload an image to run prediction.", icon="ℹ️")
-            placeholder_img = Image.new("RGB", (350, 350), color=(240, 240, 240))
-            st.image(placeholder_img, caption="No image uploaded", use_column_width=True)
 
-    with col_right:
-        # Predictions panel
-        with st.container():
-            st.markdown('<div class="card">', unsafe_allow_html=True)
-            st.markdown(f"### {selected_cancer_type.name} — Diagnosis", unsafe_allow_html=True)
+            # Predict button
+            if st.button("Predict"):
+                with st.spinner("Running model prediction..."):
+                    predicted_class, probability, probs = predict(image, cancer_type)
 
-            if uploaded_file:
-                # run prediction
-                with st.spinner("Analyzing image..."):
-                    # small UX pause
-                    time.sleep(0.8)
-                    predicted_class, probability, full_probs = predict(image, selected_cancer_type)
+                prob_percent = probability * 100
+                color_bg, color_text = color_for_prob(probability)
 
-                # Result block
-                               result_color = (
-                    "#f97373" if probability >= 0.8 else
-                    ("#fb923c" if probability >= 0.5 else "#34d399")
-                )
-
-                # Show prediction result
                 st.markdown(
                     f"""
-                    <div style="padding:12px; border-radius:8px; background:{result_color}; color:white; font-weight:600; margin-bottom:12px;">
-                        Prediction: {predicted_class} <br>
-                        Confidence: {probability*100:.1f}%
+                    <div class="card" style="background: {color_bg}; color: {color_text};">
+                        <h3>Prediction Result:</h3>
+                        <p><strong>{predicted_class}</strong> with confidence {prob_percent:.1f}%</p>
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
 
-                # Animated probability bars for all classes
-                st.markdown("#### Prediction probabilities")
-                for idx, label_name in selected_cancer_type.labels.items():
-                    animate_gradient_bar(
-                        st.empty(),
-                        label_name,
-                        float(full_probs[idx]),
-                        theme_text_color=text_color,
-                        duration=1.0
-                    )
-
-                # Description based on diagnosis
-                st.markdown("#### Interpretation")
-                if predicted_class in selected_cancer_type.true_positive_descriptions:
-                    st.markdown(selected_cancer_type.true_positive_descriptions[predicted_class])
+                # Show detailed info based on prediction
+                if predicted_class in cancer_type.true_positive_descriptions:
+                    st.markdown(f"<b>Interpretation:</b> {cancer_type.true_positive_descriptions[predicted_class]}", unsafe_allow_html=True)
+                    st.markdown(f"<b>Precautions & recommendations:</b>", unsafe_allow_html=True)
+                    st.markdown(cancer_type.precautions.get(predicted_class, "No precautions available."), unsafe_allow_html=True)
                 else:
-                    st.markdown(selected_cancer_type.true_negative_description)
+                    st.markdown(f"<b>Interpretation:</b> {cancer_type.true_negative_description}", unsafe_allow_html=True)
 
-                # Precautions / recommendations
-                st.markdown("#### Recommended Precautions")
-                if predicted_class in selected_cancer_type.precautions:
-                    st.markdown(selected_cancer_type.precautions[predicted_class], unsafe_allow_html=True)
-                else:
-                    st.markdown("Maintain regular check-ups and a healthy lifestyle.")
+                # Show prediction probabilities with animation
+                with st.container() as bar_container:
+                    st.markdown("<h4>Prediction probabilities:</h4>")
+                    for idx, label in cancer_type.labels.items():
+                        animate_gradient_bar(bar_container, label, probs[idx], text_color)
 
-            else:
-                st.warning("Please upload an image to get a diagnosis.")
-
-            st.markdown('</div>', unsafe_allow_html=True)  # close card
-
-    # Footer
-    st.markdown('<div class="footer">© 2025 NMIMR MEDICT — Powered by AI</div>', unsafe_allow_html=True)
-
+        except Exception as e:
+            st.error(f"Error processing image or model prediction: {str(e)}")
 
 if __name__ == "__main__":
     main()
