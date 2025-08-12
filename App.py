@@ -3,10 +3,11 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 
-lung_model = tf.keras.models.load_model("./models/lung.hdf5")
-kidney_model = tf.keras.models.load_model("./models/Kidney_tumor.hdf5")
-brain_model = tf.keras.models.load_model("./models/Brain_Tumor.hdf5")
 
+# Load the latest models
+lung_model = tf.keras.models.load_model("./models/Lung_Cancer_2025_08_11.h5")
+kidney_model = tf.keras.models.load_model("./models/Kidney_tumor_2025_08_11.h5")
+brain_model = tf.keras.models.load_model("./models/Brain_Tumor_2025_08_11.h5")
 
 class Cancer:
     def __init__(
